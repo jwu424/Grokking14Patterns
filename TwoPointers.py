@@ -180,3 +180,160 @@ def search_two(arr, target_sum, first, res):
             right -= 1
 
 # Given an array with positive numbers and a target number, find all of its contiguous subarrays whose product is less than the target number.
+# Time: O(N^2), Space for out list: O(N*(N+1)/2) = O(N^2)
+from collections import deque
+def find_subarrays(arr, target):
+    cur = 1
+    slow = 0
+    res = []
+    for i in range(len(arr)):
+        cur *= arr[i]
+        while cur >= target and slow <= i:
+            cur /= arr[slow]
+            slow += 1
+        temp = deque()
+        for j in range(i, slow-1, -1):
+            temp.appendleft(arr[j])
+            res.append(list(temp))
+    return res        
+        
+
+# Given an array containing 0s, 1s and 2s, sort the array in-place. You should treat numbers of the array as objects, hence, we can’t count 0s, 1s, and 2s to recreate the array.
+
+# The flag of the Netherlands consists of three colors: red, white and blue; and since our input array also consists of three different numbers that is why it is called Dutch National Flag problem.
+
+def dutch_flag_sort(arr):
+    zero_index, two_index = 0, len(arr)-1
+    i = 0
+    while i <= two_index:
+        if arr[i] == 0:
+            arr[i], arr[zero_index] = arr[zero_index], arr[i]
+            i += 1
+            zero_index += 1
+        elif arr[i] == 2:
+            arr[i], arr[two_index] = arr[two_index], arr[i]
+            two_index -= 1
+        else:
+            i += 1
+
+
+# Given an array of unsorted numbers and a target number, find all unique quadruplets in it, whose sum is equal to the target number.
+# Time: O(N^3)
+def search_quadruplets(arr, target):
+    if len(arr) < 4:
+        return []
+    arr.sort()
+    res = []
+    for i in range(len(arr)-3):
+        for j in range(i+1, len(arr)-2):
+            first, second = arr[i], arr[j]
+            temp_target = target - first - second
+            left, right = j+1, len(arr)-1
+            while left < right:
+                temp = arr[left] + arr[right]
+                if temp == temp_target:
+                    res.append([first, second, arr[left], arr[right]])
+                    left += 1
+                    right -= 1
+                    while (left < right and arr[left] == arr[left-1]):
+                        left += 1
+                    while (left< right and arr[right] == arr[right+1]):
+                        right -= 1
+                elif temp < temp_target:
+                    left += 1
+                else:
+                    right -= 1
+    return res
+
+
+# Given two strings containing backspaces (identified by the character ‘#’), check if the two strings are equal.
+
+from collections import deque
+def backspace_compare1(str1, str2):
+    s1 = clean(str1)
+    s2 = clean(str2)
+    return s1 == s2
+
+def clean(str):
+    res = deque()
+    count = 0
+    for i in range(len(str)-1, -1, -1):
+        if str[i] == '#':
+            count += 1
+        elif str[i] != '#' and count > 0:
+            count -= 1
+        else:
+            res.appendleft(str[i])
+    return list(res)
+
+
+def backspace_compare2(str1, str2):
+    index1 = len(str1) - 1
+    index2 = len(str2) - 1
+    while index1 >= 0 or index2 >= 0:
+        i1 = get_next_word(str1, index1)
+        i2 = get_next_word(str2, index2)
+
+        if str1[i1] != str2[i2]:
+            return False
+        if i1 < 0 and i2 < 0:
+            return True
+        if i1 < 0 or i2 < 0:
+            return False
+        index1 = i1 - 1
+        index2 = i2 - 1
+    return True
+
+def get_next_word(str, index):
+    count = 0
+    while index >= 0:
+        if str[index] == '#':
+            count += 1
+        elif count > 0:
+            count -= 1
+        else:
+            break
+        index -= 1
+    return index
+
+
+# Given an array, find the length of the smallest subarray in it which when sorted will sort the whole array.
+
+def shortest_window_sort(arr):
+    low, high = 0, len(arr) - 1
+    while low < len(arr)-1 and arr[low] <= arr[low+1]:
+        low += 1
+    if low == len(arr) - 1:
+        return 0
+    
+    while high >= 0 and arr[high] >= arr[high-1]:
+        high -= 1
+    
+    submax = max(arr[low:high+1])
+    submin = min(arr[low:high+1])
+
+    while low > 0 and arr[low-1] > submin:
+        low -= 1
+    while high < len(arr) - 1 and arr[high+1] < submax:
+        high += 1
+    return high - low + 1
+    
+
+# Suppose you are given an array containing non-negative numbers representing heights of a set of buildings. 
+# Now, because of differences in heights of buildings water can be trapped between them. Find the two buildings
+# that will trap the most amount of water. Write a function that will return the maximum volume of water that will be trapped between these two buildings.
+
+
+def find_max_water(building_heights):
+    left, right = 0, len(building_heights) - 1
+    max_area, current_area = 0, 0
+
+    while left < right:
+        if building_heights[left] < building_heights[right]:
+            current_area = (right - left) * building_heights[left]
+            left += 1
+        else:
+            current_area = (right - left) * building_heights[right]
+            right -= 1
+        max_area = max(max_area, current_area)
+    return max_area
