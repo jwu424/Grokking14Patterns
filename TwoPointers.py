@@ -306,7 +306,7 @@ def shortest_window_sort(arr):
     if low == len(arr) - 1:
         return 0
     
-    while high >= 0 and arr[high] >= arr[high-1]:
+    while high > 0 and arr[high] >= arr[high-1]:
         high -= 1
     
     submax = max(arr[low:high+1])

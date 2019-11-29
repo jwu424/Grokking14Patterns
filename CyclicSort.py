@@ -34,7 +34,7 @@ def find_missing_number(nums):
 
 
 # We are given an unsorted array containing numbers taken from the range 1 to ‘n’. The array can have duplicates, which means some numbers will be missing. Find all those missing numbers.
-
+# Time: O(N)
 def find_missing_numbers(nums):
     i = 0
     while i < len(nums):
@@ -48,3 +48,19 @@ def find_missing_numbers(nums):
         if nums[i] != i + 1:
             res.append(i+1)
     return res
+
+
+# We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has only one duplicate but it can be repeated multiple times. Find that duplicate number without using any extra space. You are, however, allowed to modify the input array.
+
+def find_duplicate(nums):
+    i = 0
+    while i < len(nums):
+        if nums[i] != i + 1:
+            j = nums[i] - 1
+            if nums[i] != nums[j]:
+                nums[i], nums[j] = nums[j], nums[i]
+            else:
+                return nums[i]
+        else:
+            i += 1
+    return -1
