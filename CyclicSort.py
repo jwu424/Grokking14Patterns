@@ -64,3 +64,62 @@ def find_duplicate(nums):
         else:
             i += 1
     return -1
+
+
+# We are given an unsorted array containing ‘n’ numbers taken from the range 1 to ‘n’. The array originally contained all the numbers from 1 to ‘n’, but due to a data error, one of the numbers got duplicated which also resulted in one number going missing. Find both these numbers.
+# Time: O(N)
+def find_corrupt_numbers(nums):
+    i = 0
+    while i < len(nums):
+        j = nums[i] - 1
+        if nums[i] != nums[j]:
+            nums[i], nums[j] = nums[j], nums[i]
+        else:
+            i += 1
+    for i in range(len(nums)):
+        if nums[i] != i + 1:
+            return [nums[i], i + 1]
+    return [-1, -1]
+
+
+# Given an unsorted array containing numbers, find the smallest missing positive number in it.
+
+def find_first_missing_positive(nums):
+    i, n = 0, len(nums)
+    while i < n:
+        j = nums[i] - 1
+        if nums[i] > 0 and nums[i] <= n and nums[i] != nums[j]:
+            nums[i], nums[j] = nums[j], nums[i]
+        else:
+            i += 1
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1
+    return n + 1
+
+# Given an unsorted array containing numbers and a number ‘k’, find the first ‘k’ missing positive numbers in the array.
+# Time: O(n+k)
+def find_first_k_missing_positive(nums, k):
+  missingNumbers = []
+  extranum = set()
+  i, n = 0, len(nums)
+  while i < n:
+    j = nums[i] - 1
+    if nums[i] > 0 and nums[i] <= n and nums[i] != nums[j]:
+      nums[i], nums[j] = nums[j], nums[i]
+    else:
+      i += 1
+  
+  for i in range(n):
+    if len(missingNumbers) < k:
+      if nums[i] != i + 1:
+        missingNumbers.append(i+1)
+        extranum.add(nums[i])
+  i = 1
+  while len(missingNumbers) < k:
+    cand = i + n
+    if cand not in extranum:
+      missingNumbers.append(cand)
+    i += 1
+  return missingNumbers
+
