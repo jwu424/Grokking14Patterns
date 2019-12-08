@@ -208,3 +208,94 @@ def rearrange_string(str):
         prev_elem = elem
         prev_freq = freq + 1
     return ''.join(res) if len(res) == len(str) else ""
+
+
+# Given a string and a number ‘K’, find if the string can be rearranged such that the same characters are at least ‘K’ distance apart from each other.
+# Time: O(NlogN)
+
+from heapq import *
+from collections import deque
+
+
+def reorganize_string(str, k):
+    if k <= 1:
+        return str
+    count = {}
+    for elem in str:
+        count[elem] = count.get(elem, 0) + 1
+    maxHeap = []
+    for elem, freq in count.items():
+        heappush(maxHeap, (-freq, elem))
+    queue = deque()
+    res = []
+    while maxHeap:
+        freq, elem = heappop(maxHeap)
+        res.append(elem)
+        queue.append((elem, freq+1))
+        if len(queue) == k:
+            elem, freq = queue.popleft()
+            if -freq > 0:
+                heappush(maxHeap, (freq, elem))
+    return ''.join(res) if len(res) == len(str) else ""
+
+
+# You are given a list of tasks that need to be run, in any order, on a server. 
+# Each task will take one CPU interval to execute but once a task has finished, it has a cooling period during which it can’t be run again. 
+# If the cooling period for all tasks is ‘K’ intervals, find the minimum number of CPU intervals that the server needs to finish all tasks.
+# If at any time the server can’t execute any task then it must stay idle.
+# Time: O{NlogN}
+def schedule_tasks(tasks, k):
+    count = {}
+    for elem in tasks:
+        count[elem] = count.get(elem, 0) + 1
+    maxHeap = []
+    for elem, freq in count.items():
+        heappush(maxHeap, (-freq, elem))
+    res = 0
+    while maxHeap:
+        waitlist = []
+        n = k + 1
+        while n > 0 and maxHeap:
+            freq, elem = heappop(maxHeap)
+            res += 1
+            if -freq > 1:
+                waitlist.append((freq+1, elem))
+            n -= 1
+        for freq, elem in waitlist:
+            heappush(maxHeap, (freq, elem))
+        if maxHeap:
+            res += n
+    return res
+ 
+# Design a class that simulates a Stack data structure, implementing the following two operations:
+# push(int num): Pushes the number ‘num’ on the stack.
+# pop(): Returns the most frequent number in the stack. If there is a tie, return the number which was pushed later.
+
+class Element():
+    def __init__(self, number, freq, seq):
+        self.number = number
+        self.freq = freq
+        self.seq = seq
+    
+    def __lt__(self, other):
+        if self.freq != other.freq:
+            return self.freq > other.freq
+        return self.seq > other.seq
+
+class FrequencyStack():
+    seq = 0
+    maxHeap = []
+    freqMap = {}
+
+    def push(self, num):
+        self.freqMap[num] = self.freqMap.get(num, 0) + 1
+        heappush(self.maxHeap, Element(num, self.freqMap[num], self.seq))
+        self.seq += 1
+    
+    def pop(self):
+        num = heappop(self.maxHeap).number
+        if self.freqMap[num] > 1:
+            self.freqMap[num] -= 1
+        else:
+            del self.freqMap[num]
+        return num
