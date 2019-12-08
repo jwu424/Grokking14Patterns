@@ -56,7 +56,7 @@ def calculate_bitwise_complement(num):
 # To flip an image horizontally means that each row of the image is reversed. 
 # For example, flipping [0, 1, 1] horizontally results in [1, 1, 0].
 # To invert an image means that each 0 is replaced by 1, and each 1 is replaced by 0. For example, inverting [1, 1, 0] results in [0, 0, 1].
-
+# Time: O(N)
 def flip_and_invert_image(matrix):
     c = len(matrix)
     for row in matrix:
