@@ -329,7 +329,7 @@ def count_subsets(num, sum):
     for i in range(1, n):
         for s in range(sum, -1, -1):
             if s >= num[i]:
-                dp[s] += dp[s-num[i]]
+                dp[s] += dp[s-num[i]cd]
     return dp[sum]
 
 
@@ -353,3 +353,25 @@ def find_target_subsets_recursive(num, s, curIndex):
     temp2 = find_target_subsets_recursive(num, s+num[curIndex], curIndex+1)
     return temp1 + temp2
     
+
+# Bottom-Up
+# Time: O(N*S)
+def find_target_subsets(num, s):
+    totalSum = sum(num)
+    if totalSum < s or (s + totalSum) % 2 == 1:
+        return 0
+    return count_subsets(num, (s+totalSum)//2)
+
+def count_subsets(num, sum):
+    n = len(num)
+    dp = [[0 for x in range(sum+1)] for y in range(n)]
+    for i in range(n):
+        dp[i][0] = 1
+    for s in range(1, sum+1):
+        dp[0][s] = num[0] == s
+    for i in range(1, n):
+        for s in range(1, sum+1):
+            dp[i][s] = dp[i-1][s]
+            if s >= num[i]:
+                dp[i][s] += dp[i-1][s-num[i]]
+    return dp[n-1][s]
