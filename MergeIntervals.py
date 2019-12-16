@@ -79,18 +79,16 @@ def can_attend_all_appointments(intervals):
 
 def find_conlict(intervals):
     if len(intervals) <= 1:
-        return True
+        return []
     intervals.sort()
-    j = 0
     res = []
-    for i in range(1, len(intervals)):
-        if intervals[i][0] < intervals[j][1]:
-            res.append([intervals[j], intervals[i]])
-        else:
-            if intervals[i][1] < intervals[j][1]:
-                continue
+    for i in range(len(intervals)-1):
+        for j in range(i+1, len(intervals)):
+            if intervals[j][0] < intervals[i][1]:
+                res.append([intervals[i], intervals[j]])
             else:
-                j += 1
+                break
+                    
     return res
 
 
@@ -100,16 +98,13 @@ def find_conlict(intervals):
 
 from heapq import *
 def min_meeting_rooms(meetings):
-    if len(meetings) <= 1:
-        return len(meetings)
-    meetings.sort(key=lambda x: x.start)
+    meetings.sort()
     minRooms = 0
     minHeap = []
     for meeting in meetings:
-        while (len(minHeap) > 0 and minHeap[0].end <= meeting.start):
+        while len(minHeap) > 0 and meeting[0] >= minHeap[0][0]:
             heappop(minHeap)
-        
-        heappush(minHeap, meeting)
+        heappush(minHeap, [meeting[1], meeting[0]]) # Need to switch the start and end, cause we sort by end time in minHeap.
         minRooms = max(minRooms, len(minHeap))
     return minRooms
             
@@ -119,18 +114,17 @@ def min_meeting_rooms(meetings):
 
 
 def find_max_cpu_load(jobs):
-    jobs.sort(key=lambda x: x.start)
-    max_cpu_load, cur_cpu_load = 0, 0
-    minheap = []
-
-    for j in jobs:
-        while len(minheap) > 0 and j.start >= minheap[0].end:
-            cur_cpu_load -= minheap[0].cpu_load
-            heappop(minheap)
-        heappush(minheap, j)
-        cur_cpu_load += j.cpu_load
-        max_cpu_load = max(max_cpu_load, cur_cpu_load)
-    return max_cpu_load
+    jobs.sort()
+    maxLoad, curLoad = 0, 0
+    minHead = []
+    for job in jobs:
+        while len(minHead) > 0 and job[0] >= minHead[0][0]:
+            curLoad -= minHead[0][2]
+            heappop(minHead)
+        heappush(minHead, [job[1], job[0], job[2]]) # Need to switch the start and end, cause we sort by end time in minHeap.
+        curLoad += job[2]
+        maxLoad = max(curLoad, maxLoad)
+    return maxLoad
 
 
 # For ‘K’ employees, we are given a list of intervals representing the working hours of each employee.
@@ -140,3 +134,43 @@ def find_max_cpu_load(jobs):
 # 1. put all intervals together and then sort. Finally try to merge the intervals
 # Time: O(NlogN)
 
+# 2. Use minHeap
+# Time: O(N*logK)
+class Interval:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+    
+
+class EmployeeInterval:
+    def __init__(self, interval, employeeIndex, intervalIndex):
+        self.interval = interval
+        self.employeeIndex = employeeIndex
+        self.intervalIndex = intervalIndex
+    
+    def __lt__(self, other):
+        return self.interval.start < other.interval.start
+
+
+def find_employee_free_time(schedule):
+    n = len(schedule)
+    res = []
+    if not schedule or n == 0:
+        return res
+    minHeap = []
+    for i in range(n):
+        heappush(minHeap, EmployeeInterval(schedule[i][0], i, 0))
+    
+    preInterval = minHeap[0].interval
+    while minHeap:
+        queueTop = heappop(minHeap)
+        if preInterval.end < queueTop.interval.start:
+            res.append(Interval(preInterval.end, queueTop.interval.start))
+            preInterval = queueTop.interval
+        else:
+            if preInterval.end < queueTop.interval.end:
+                preInterval = queueTop.interval
+        employeeSchedule = schedule[queueTop.employeeIndex]
+        if len(employeeSchedule) > queueTop.intervalIndex + 1:
+            heappush(minHeap, EmployeeInterval(employeeSchedule[queueTop.intervalIndex+1], queueTop.employeeIndex, queueTop.intervalIndex+1))
+    return res
