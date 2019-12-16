@@ -21,13 +21,6 @@ def find_averages_of_subarrays(K, arr):
 
 # 1. Brute force
 # Time: O(N+K)
-
-# 2. Try to avoid duplicate operations.
-# Time: O(N)
-
-# 3. Another version of method 2
-# Time: O(N)
-
 def max_sub_array_of_size_k1(k, arr):
     maxx = 0
     for i in range(len(arr)-k+1):
@@ -35,7 +28,8 @@ def max_sub_array_of_size_k1(k, arr):
         maxx = max(maxx, temp)
     return maxx
 
-
+# 2. Try to avoid duplicate operations.
+# Time: O(N)
 def max_sub_array_of_size_k2(k, arr):
     maxx = 0
     for i in range(len(arr)-k+1):
@@ -46,7 +40,8 @@ def max_sub_array_of_size_k2(k, arr):
         maxx = max(maxx, temp)
     return maxx
 
-
+# 3. Another version of method 2
+# Time: O(N)
 def max_sub_array_of_size_k3(k, arr):
     max_sum = 0
     window_start, windown_sum = 0, 0
@@ -59,12 +54,10 @@ def max_sub_array_of_size_k3(k, arr):
             window_start += 1
     return max_sum
 
+
 # Given an array of positive numbers and a positive number ‘S’, find the length of the smallest contiguous subarray whose sum is greater than or equal to ‘S’. Return 0, if no such subarray exists.
 # 1. Brute force
 # Time complexity: O(N^2)
-
-# 2. Better way. 
-# Time complexity: O(N)
 
 def smallest_subarray_with_given_sum(s, arr):
     for i in range(1, len(arr)+1):
@@ -72,6 +65,9 @@ def smallest_subarray_with_given_sum(s, arr):
             if sum(arr[j:j+i]) >= s:
                 return i
     return 0
+
+# 2. Better way. 
+# Time complexity: O(N)
 
 def smallest_subarray_with_given_sum(s, arr):
     window_sum = 0
@@ -142,10 +138,6 @@ def fruits_into_baskets(fruits):
 
 # 1. Idea is similar. Whenever the count of the key in dictt == 2, we should move window_start.
 # Time complexity: O(N)
-
-# 2. Try to record the index of the elem, instead of count.
-# Time complexity: O(N)
-
 def longest_substring_with_k_distinct1(str):
     window_start = 0
     max_length = 0
@@ -162,6 +154,8 @@ def longest_substring_with_k_distinct1(str):
     return max_length
 
 
+# 2. Try to record the index of the elem, instead of count.
+# Time complexity: O(N)
 def longest_substring_with_k_distinct2(str):
     window_start = 0
     max_length = 0
