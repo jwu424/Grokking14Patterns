@@ -29,27 +29,33 @@ def find_path_recursive(curNode, sum, curPath, res):
     del curPath[-1]
 
 
-# Given a binary tree, find the root-to-leaf path with the maximum sum.
-# Not test.
-def find_paths_max(root):
-    res = []
-    sum_max = 0
-    find_path_recursive(root, sum_max, [], 0, res)
-    return res, sum_max
-    
-def find_path_recursive(curNode, sum_max, curPath, curSum, res):
-    if not curNode:
-        return 
-    curPath.append(curNode)
-    curSum += curNode.val
-    if curSum > sum_max and not curNode.left and not curNode.right:
-        res = curPath
-        sum_max = curSum
+def find_paths(root, sum):
+    allPaths = []
+    find_paths_recursive(root, sum, [], allPaths)
+    return allPaths
+
+
+def find_paths_recursive(currentNode, sum, currentPath, allPaths):
+    if currentNode is None:
+        return
+    if currentNode.val == sum and currentNode.left is None and currentNode.right is None:
+        allPaths.append(list(currentPath+[currentNode.val]))
     else:
-        find_path_recursive(curNode.left, sum_max, curPath, curSum, res)
-        find_path_recursive(curNode.right, sum_max, curPath, curSum, res)
-    del curPath[-1]
-    curSum -= curNode.val
+        find_paths_recursive(currentNode.left, sum -
+                            currentNode.val, currentPath+[currentNode.val], allPaths)
+        find_paths_recursive(currentNode.right, sum -
+                            currentNode.val, currentPath+[currentNode.val], allPaths)
+
+
+
+# Given a binary tree, find the root-to-leaf path with the maximum sum.
+# Time: O(N)
+def find_paths_max(root):
+    if not root:
+        return 
+    max_sum_left = 0 if not root.left else find_paths_max(root.left)
+    max_sum_right = 0 if not root.right else find_paths_max(root.right)
+    return max_sum_left + root.val if max_sum_left > max_sum_right else max_sum_right + root.val
 
 
 # Given a binary tree where each node can only have a digit (0-9) value, each root-to-leaf path will represent a number. Find the total sum of all the numbers represented by all paths.
