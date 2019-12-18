@@ -82,7 +82,7 @@ def reverseSizeBy2Unit(head, k, skipmiddle):
     if not head:
         return None
     count = 0
-    curr, prev, next = head, None, skipmiddle
+    curr, prev, next = head, None, None
 
     while curr and count < k:
         next = curr.next
@@ -91,7 +91,8 @@ def reverseSizeBy2Unit(head, k, skipmiddle):
         curr = next
         count += 1
     if not skipmiddle:
-        head.next = reverseSizeBy2Unit(next, k, False)
+        if next:
+            head.next = reverseSizeBy2Unit(next, k, False)
     else:
         head.next = next
         if next:
