@@ -120,7 +120,6 @@ def find_next_interval(intervals):
     for _ in range(n):
         topEnd, endIndex = heappop(maxEndHeap)
         if -maxStartHeap[0][0] >= -topEnd:
-            topStart, startIndex = heappop(maxStartHeap)
             while maxStartHeap and -maxStartHeap[0][0] >= -topEnd:
                 topStart, startIndex = heappop(maxStartHeap)
             res[endIndex] = startIndex
