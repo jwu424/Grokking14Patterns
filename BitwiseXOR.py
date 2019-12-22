@@ -58,7 +58,7 @@ def calculate_bitwise_complement(num):
 # To invert an image means that each 0 is replaced by 1, and each 1 is replaced by 0. For example, inverting [1, 1, 0] results in [0, 0, 1].
 # Time: O(N)
 def flip_and_invert_image(matrix):
-    c = len(matrix)
+    c = len(matrix[0])
     for row in matrix:
         for i in range((c+1)//2):
             row[i], row[c-i+1] = row[c-i-1] ^ 1, row[i] ^ 1

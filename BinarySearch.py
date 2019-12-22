@@ -86,7 +86,7 @@ def search_next_letter(letters, key):
             end = mid - 1
         else:
             start = mid + 1
-    return letters[start % n]
+    return letters[start]
 
 
 # Given an array of numbers sorted in ascending order, find the range of a given number ‘key’. 
@@ -94,7 +94,7 @@ def search_next_letter(letters, key):
 # Write a function to return the range of the ‘key’. If the ‘key’ is not present return [-1, -1].
 # Time: O(logN)
 
-def find_range(arr, key):
+def find_range1(arr, key):
     res = [-1, -1]
     res[0] = binary_search_max_min(arr, key, False)
     if res[0] != -1:
@@ -117,6 +117,24 @@ def binary_search_max_min(arr, key, IsMax):
             else:
                 end = mid - 1
     return keyIndex 
+
+
+def find_range2(arr, key):
+    start, end = 0, len(arr) - 1
+    while start <= end:
+        mid = start + (end - start) // 2
+        if arr[mid] == key:
+            start, end = mid, mid
+            while start > 0 and arr[start-1] == arr[mid]:
+                start -= 1
+            while end < len(arr) - 1 and arr[end+1] == arr[mid]:
+                end += 1
+            return [start, end]
+        elif arr[mid] < key:
+            start = mid + 1
+        else:
+            end = mid - 1
+    return [-1, -1]
 
 
 # Given an infinite sorted array (or an array with unknown size), find if a given number ‘key’ is present in the array. 

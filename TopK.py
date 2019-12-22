@@ -32,33 +32,16 @@ def find_Kth_smallest_number(nums, k):
 # Given an array of points in the a 2D plane, find ‘K’ closest points to the origin.
 # Time: O(NlogK); Space: O(K)
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    # used for max-heap
-    def __lt__(self, other):
-        return self.distance_from_origin() > other.distance_from_origin()
-
-    def distance_from_origin(self):
-        return (self.x * self.x) + (self.y * self.y)
-
-    def print_point(self):
-        print("[" + str(self.x) + ", " + str(self.y) + "] ", end='')
-
-
 def find_closest_points(points, k):
     maxHeap = []
     for i in range(k):
-        heappush(maxHeap, points[i])
-
+        dis = points[i][0] ** 2 + points[i][1] ** 2
+        heappush(maxHeap, (-dis, points[i]))
     for i in range(k, len(points)):
-        if points[i].distance_from_origin() < maxHeap[0].distance_from_origin():
-            heappop(maxHeap)
-            heappush(maxHeap, points[i])
-
-    return list(maxHeap)
+        dis = points[i][0] ** 2 + points[i][1] ** 2
+        if dis < -maxHeap[0][0]:
+            heappushpop(maxHeap, (-dis, points[i]))
+    return [x[1] for x in maxHeap]
 
 # Given ‘N’ ropes with different lengths, we need to connect these ropes into one big rope with minimum cost. 
 # The cost of connecting two ropes is equal to the sum of their lengths.
