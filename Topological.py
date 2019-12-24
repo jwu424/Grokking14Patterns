@@ -180,3 +180,77 @@ def find_order(words):
 
 # Given a sequence originalSeq and an array of sequences, write a method to find if originalSeq can be uniquely reconstructed from the array of sequences.
 # Unique reconstruction means that we need to find if originalSeq is the only sequence such that all sequences in the array are subsequences of it.
+
+# Time: O(V+N)
+def can_construct(originalSeq, sequences):
+    if len(originalSeq) <= 0:
+        return False
+    inDegree = {}
+    graph = {}
+    res = []
+    for seq in sequences:
+        for num in seq:
+            inDegree[num] = 0
+            graph[num] = []
+    for seq in sequences:
+        for i in range(1, len(seq)):
+            parent, child = seq[i-1], seq[i]
+            inDegree[child] += 1
+            graph[parent].append(child)
+
+    if len(inDegree) != len(originalSeq):
+        return False
+    source = deque()
+    for key, value in inDegree.items():
+        if value == 0:
+            source.append(key)
+    while source:
+        if len(source) > 1:
+            return False
+        if originalSeq[len(res)] != source[0]:
+            return False
+        vertex = source.popleft()
+        res.append(vertex)
+        for child in graph[vertex]:
+            inDegree[child] -= 1
+            if inDegree[child] == 0:
+                source.append(child)
+
+    return len(res) == len(originalSeq)
+
+
+# We are given an undirected graph that has characteristics of a k-ary tree. 
+# In such a graph, we can choose any node as the root to make a k-ary tree. 
+# The root (or the tree) with the minimum height will be called Minimum Height Tree (MHT). 
+# There can be multiple MHTs for a graph. In this problem, we need to find all those roots which give us MHTs. 
+# Write a method to find all MHTs of the given graph and return a list of their roots.
+
+# Time: O(V+E)
+def find_trees(nodes, edges):
+    if nodes <= 0:
+        return []
+    if nodes == 1:
+        return [0]
+    inDegree = {i: 0 for i in range(nodes)}
+    graph = {i: [] for i in range(nodes)}
+    
+    for edge in edges:
+        n1, n2 = edge[0], edge[1]
+        inDegree[n1] += 1
+        inDegree[n2] += 1
+        graph[n1].append(n2)
+        graph[n2].append(n1)
+    leaves = deque()
+    for key, value in inDegree.items():
+        if value == 1:
+            leaves.append(key)
+    totalNode = nodes
+    while totalNode > 2:
+        totalNode -= len(leaves)
+        for i in range(len(leaves)):
+            vertex = leaves.popleft()
+            for child in graph[vertex]:
+                inDegree[child] -= 1
+                if inDegree[child] == 1:
+                    leaves.append(child)
+    return list(leaves)

@@ -110,7 +110,7 @@ def solve_knapsack(profits, weights, capacity):
 
 # Given a set of positive numbers, find if we can partition it into two subsets such that the sum of elements in both subsets is equal.
 
-# Brute force
+# Top-down
 # Time: O(2^N)
 def can_partition(num):
     ss = sum(num)
@@ -129,7 +129,7 @@ def partition_recursive(num, target, curIndex, curSum):
             return True
     return partition_recursive(num, target, curIndex+1, curSum)
 
-# Top-down
+# Top-down with memoization
 # Time: O(N * S). S: total sum of all numbers.
 def can_partition(num):
     s = sum(num)
@@ -175,43 +175,81 @@ def can_partition(num):
     return dp[n-1][s]
 
 
+def can_partition2(num):
+    totalSum = sum(num)
+    if totalSum % 2 != 0:
+        return False
+    target = totalSum//2
+    dp = [[False for x in range(target+1)] for y in range(2)]
+    for i in range(2):
+        dp[i][0] = True
+    for j in range(1, target+1):
+        dp[0][j] = num[0] == j
+    for i in range(1, len(num)):
+        for j in range(1, target+1):
+            if dp[(i-1)%2][j]:
+                dp[i%2][j] = dp[(i-1)%2][j]
+            elif num[i] <= j:
+                dp[i%2][j] = dp[(i-1)%2][j-num[i]]
+    return dp[(len(num))%2][-1]
+
 # Given a set of positive numbers, determine if a subset exists whose sum is equal to a given number ‘S’.
+
+# Top-down
+# Time: O(2^N)
+def can_partition(num, target):
+    if sum(num) < target:
+        return False
+    return can_partition_resc(num, target, 0)
+
+def can_partition_resc(num, target, curIndex):
+    if target == 0:
+        return True
+    if len(num) == 0 or curIndex >= len(num):
+        return False
+    p1 = False
+    if num[curIndex] <= target:
+        p1 = can_partition_resc(num, target-num[curIndex], curIndex+1)
+    p2 = can_partition_resc(num, target, curIndex+1)
+    return p1 or p2
+
 
 # Bottom-up
 # Time: O(N * S); Space: O(N * S)
-def can_partition(num, sum):
+def can_partition(num, target):
     n = len(num)
-    dp = [[False for x in range(sum+1)] for y in range(n)]
+    dp = [[False for x in range(target+1)] for y in range(n)]
     for i in range(0, n):
         dp[i][0] = True
-    for j in range(1, sum+1):
+    for j in range(1, target+1):
         dp[0][j] = num[0] == j
     for i in range(1, n):
-        for j in range(1, sum+1):
+        for j in range(1, target+1):
             if dp[i-1][j]:
                 dp[i][j] = dp[i-1][j]
             elif j >= num[i]:
                 dp[i][j] = dp[i-1][j-num[i]]
-    return dp[n-1][sum]
+    return dp[n-1][target]
+
 
 # improved Bottom-up
 # Time: O(N * S); Space: O(S)
-def can_partition(num, sum):
+def can_partition(num, target):
     n = len(num)
-    dp = [False for x in range(sum+1)]
+    dp = [False for x in range(target+1)]
     dp[0] = True
-    for j in range(1, sum+1):
+    for j in range(1, target+1):
         dp[j] = num[0] == j
     for i in range(1, n):
-        for j in range(sum, -1, -1):
+        for j in range(target, -1, -1):
             if not dp[j] and j >= num[i]:
                 dp[j] = dp[j-num[i]]
-    return dp[sum]
+    return dp[target]
 
 
 # Given a set of positive numbers, partition the set into two subsets with minimum difference between their subset sums.
 
-# Brute force
+# Top-down
 # Time: O(2^N)
 def can_partition(num):
     return can_partition_recursive(num, 0, 0, 0)
@@ -223,7 +261,7 @@ def can_partition_recursive(num, curIndex, sum1, sum2):
     diff2 = can_partition_recursive(num, curIndex+1, sum1, sum2+num[curIndex])
     return min(diff1, diff2)
 
-# Top-down
+# Top-down with memoization
 # Time: O(N*S)
 def can_partition(num):
     s = sum(num)
@@ -266,7 +304,7 @@ def can_partition(num):
 
 # Given a set of positive numbers, find the total number of subsets whose sum is equal to a given number ‘S’.
 
-# Brute force
+# Top-down
 # Time: O(2^N)
 def count_subsets(num, sum):
     return count_subset_recursive(num, sum, 0, 0)
@@ -283,7 +321,7 @@ def count_subset_recursive(num, sum, curSum, curIndex):
     temp2 = count_subset_recursive(num, sum, curSum, curIndex+1)
     return temp1 + temp2
 
-# Top-down
+# Top-down with memoization
 # Time: O(N*S)
 def count_subsets(num, sum):
     dp = [[-1 for x in range(sum+1)] for y in range(len(num))]
@@ -329,7 +367,7 @@ def count_subsets(num, sum):
     for i in range(1, n):
         for s in range(sum, -1, -1):
             if s >= num[i]:
-                dp[s] += dp[s-num[i]cd]
+                dp[s] += dp[s-num[i]]
     return dp[sum]
 
 
